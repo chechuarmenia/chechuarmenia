@@ -1,0 +1,19 @@
+{
+  "name": "CHECHU DASHBOARD",
+  "short_name": "CHECHU",
+  "description": "Chechu · Creative Dashboard",
+  "id": "/chechuarmenia/",
+  "start_url": "/chechuarmenia/",
+  "scope": "/chechuarmenia/",
+  "display": "standalone",
+  "background_color": "#f7fafd",
+  "theme_color": "#142c46",
+  "icons": [
+    {
+      "src": "./app-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
