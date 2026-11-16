@@ -18,7 +18,7 @@ Email habilitado, registro permitido y confirmación por correo requerida. La co
 5. Revisar cantidades de tareas, objetivos, movimientos y presupuestos contra los originales. Comparar también importes y cotizaciones. No declarar completa la migración antes de esta revisión.
 6. En el teléfono ingresar con la misma cuenta y elegir “Descargar nube”. Se respalda su copia anterior antes de reemplazarla.
 
-La sincronización de cambios guardados funciona cada cinco segundos mientras la página está visible. Un conflicto detiene las subidas. Respaldar ambos dispositivos antes de resolverlo descargando la versión elegida. Los formularios de presupuesto requieren Guardar. El respaldo incluye valores financieros y tasas almacenadas sin recalcularlos durante la migración.
+La sincronización de cambios guardados funciona en ambos sentidos cada cinco segundos mientras la página está visible, y también al volver a la app o recuperar conexión. Recibe la nube automáticamente cuando la copia local no tiene cambios pendientes y no hay formularios abiertos. Actualiza la vista sin recargar y guarda una copia de recuperación local antes de recibir datos. Si hay cambios en ambos dispositivos, detiene las subidas y conserva las dos versiones. Respaldar ambos dispositivos antes de resolverlo descargando la versión elegida. Los formularios de presupuesto requieren Guardar. El respaldo incluye valores financieros y tasas almacenadas sin recalcularlos durante la migración.
 
 La PWA ofrece actualización explícita. Guardar formularios antes de aceptarla. La autenticación necesita conexión y usa Supabase JS desde esm.sh; el modo original local sigue disponible si no hay conexión. No se cachean respuestas de Supabase en el service worker.
 
@@ -31,4 +31,6 @@ Se conserva por separado la referencia USD/AMD al buscar cotización para presup
 ## Validación realizada y límites
 
 Comprobación de sintaxis de los seis scripts inline, sincronización y service worker; aislamiento de cuenta sin modificar los originales; cálculo de presupuesto y expresiones aritméticas. Conexión real al endpoint público de configuración de autenticación comprobada. Faltan pruebas visuales, acceso real con cuenta, ejecución del SQL, pruebas RLS y concurrencia en Supabase y verificación con los datos originales. Esta rama no debe considerarse una migración completada.
+
+El acceso a Cuenta y sincronización está en el encabezado (☁ Cuenta); no hay un botón flotante sobre la navegación inferior. Las pruebas simuladas verifican recepción automática, conservación de borradores y de cambios concurrentes, recuperación, reanudación y ausencia de recargas.
 
