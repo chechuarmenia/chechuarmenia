@@ -74,7 +74,7 @@
  $('cloudRestore').onchange=async e=>{try{if(owner)throw Error('Para restaurar un respaldo, elegí primero los datos locales originales.');const f=e.target.files[0];if(!f)return;const b=JSON.parse(await f.text());if(b.format!=='chechu-full-backup-v1'||!valid(b.data))throw Error('Respaldo incompatible.');backup(snapshot(''),'antes-de-restaurar');if(!confirm('¿Restaurar este respaldo en los datos locales originales? No modifica la nube.'))return;for(const k of keys){if(b.data[k]===null)localStorage.removeItem(k);else localStorage.setItem(k,b.data[k])}location.reload()}catch(e){status(e.message)}};
  let client,user,busy=false,baseline=null,lastSaved='',ready=false,pendingConflict=null;
  panel.hidden=!!owner||sessionStorage.getItem('chechu_local_mode')==='1';
- const dirty=()=>baseline&&!sameSnapshot(snapshot(),baseline.data);
+ const dirty=()=>baseline&&(!valid(snapshot())||!sameSnapshot(snapshot(),baseline.data));
  const metaKey=()=>prefix+'cloud_baseline';
  async function read(){const {data,error}=await client.from('dashboard_data').select('data,updated_at').eq('user_id',user.id).maybeSingle();if(error)throw error;return data}
  function adopt(s){if(!valid(s))throw Error('Formato de nube incompatible. No se cambió ningún dato.');backup(snapshot(),'antes-de-descargar');for(const k of keys){if(s[k]===null)localStorage.removeItem(prefix+k);else localStorage.setItem(prefix+k,s[k])}}
@@ -82,7 +82,7 @@
  if(!force&&(document.hidden||editing()))return false;
  const previous=snapshot(),oldMeta=localStorage.getItem(metaKey()),oldBaseline=baseline,oldSaved=lastSaved;
  // A durable recovery copy is saved before any working data is replaced.
- localStorage.setItem(prefix+'cloud_previous',JSON.stringify({createdAt:new Date().toISOString(),data:previous,baseline}));
+ if(!force)localStorage.setItem(prefix+'cloud_previous',JSON.stringify({createdAt:new Date().toISOString(),data:previous,revision:baseline?.revision}));
  try{for(const k of keys){if(row.data.storage[k]===null)localStorage.removeItem(prefix+k);else localStorage.setItem(prefix+k,row.data.storage[k])}remember(row,row.data.storage);for(const refresh of window.dashboardRefreshers)refresh();}
  catch(e){baseline=oldBaseline;lastSaved=oldSaved;for(const k of keys){if(previous[k]===null)localStorage.removeItem(prefix+k);else localStorage.setItem(prefix+k,previous[k])}if(oldMeta===null)localStorage.removeItem(metaKey());else localStorage.setItem(metaKey(),oldMeta);for(const refresh of window.dashboardRefreshers)refresh();throw e}
  status('Sincronizado automáticamente · '+new Date().toLocaleTimeString());announce('☁ Cuenta');return true;
@@ -98,13 +98,19 @@
  $('cloudConflictList').innerHTML=result.details.map(d=>'<li><strong>'+escape(describe(d.path))+'</strong><br>Este dispositivo: '+escape(value(d.local))+'<br>Otro dispositivo: '+escape(value(d.remote))+'</li>').join('')||result.issues.map(p=>'<li>'+escape(describe(p.split(' / ')))+'</li>').join('');
  status('Hay un cambio para revisar en Settings. Los demás datos están conservados.');
  }
- function preserve(local,remote){localStorage.setItem(prefix+'cloud_recovery',JSON.stringify({createdAt:new Date().toISOString(),local,remote:remote.data.storage,baseline:baseline?.data,revision:remote.updated_at}))}
+ async function recoveryStorage(value){
+ const key=owner||'original';
+ if(typeof indexedDB==='undefined'){if(value)localStorage.setItem(prefix+'cloud_recovery',JSON.stringify(value));return JSON.parse(localStorage.getItem(prefix+'cloud_recovery')||'null')}
+ const db=await new Promise((resolve,reject)=>{const request=indexedDB.open('chechu-recovery',1);request.onupgradeneeded=()=>request.result.createObjectStore('copies');request.onsuccess=()=>resolve(request.result);request.onerror=()=>reject(request.error)});
+ try{return await new Promise((resolve,reject)=>{const tx=db.transaction('copies',value?'readwrite':'readonly'),store=tx.objectStore('copies');const request=value?store.put(value,key):store.get(key);let result;request.onsuccess=()=>result=request.result;tx.oncomplete=()=>resolve(result);tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error||Error('No se pudo guardar la copia de recuperación.'))})}finally{db.close()}
+ }
+ async function preserve(local,remote){await recoveryStorage({createdAt:new Date().toISOString(),local,remote:remote.data.storage,revision:remote.updated_at})}
  async function reconcile(row,prefer){
  if(document.hidden||editing())return false;
  if(!baseline){autoReceive(row,true);return true}
  const current=snapshot(),result=mergeSnapshots(baseline.data,current,row.data.storage,prefer);
  if(result.issues.length&&!prefer){showConflict(row);return false}
- preserve(current,row);
+ await preserve(current,row);
  if(sameSnapshot(result.storage,row.data.storage)){autoReceive(row,true);pendingConflict=null;notice.hidden=true;$('cloudConflict').hidden=true;ready=true;return true}
  const {data,error}=await client.rpc('save_dashboard_checked',{payload:{format:'chechu-sync-v1',storage:result.storage},expected_updated_at:row.updated_at});
  if(error)throw error;
@@ -116,7 +122,7 @@
  }
  $('cloudChooseLocal').onclick=()=>resolveChoice('local');$('cloudChooseRemote').onclick=()=>resolveChoice('remote');
  async function resolveChoice(prefer){if(busy||!pendingConflict)return;busy=true;try{const row=await read();if(!row||row.updated_at!==pendingConflict.updated_at){if(row)showConflict(row);status('Hubo otro cambio. Revisá las opciones de nuevo.');return}await reconcile(row,prefer)}catch(e){status('No se pudo actualizar. Tus datos se conservan: '+e.message)}finally{busy=false}}
- $('cloudRecovery').onclick=()=>{try{const raw=localStorage.getItem(prefix+'cloud_recovery')||localStorage.getItem(prefix+'cloud_previous');if(!raw){status('Todavía no hay una copia anterior para recuperar.');return}const r=JSON.parse(raw);backup(r.local||r.data,'recuperacion-este-dispositivo');if(r.remote)backup(r.remote,'recuperacion-otro-dispositivo')}catch(e){status(e.message)}};
+ $('cloudRecovery').onclick=async()=>{try{const r=await recoveryStorage()||JSON.parse(localStorage.getItem(prefix+'cloud_recovery')||localStorage.getItem(prefix+'cloud_previous')||'null');if(!r){status('Todavía no hay una copia anterior para recuperar.');return}backup(r.local||r.data,'recuperacion-este-dispositivo');if(r.remote)backup(r.remote,'recuperacion-otro-dispositivo')}catch(e){status(e.message)}};
   function remember(row,s){localStorage.setItem(metaKey(),JSON.stringify({revision:row.updated_at,data:s}));baseline={revision:row.updated_at,data:s};lastSaved=JSON.stringify(s)}
  async function push(initial=false){if(!ready||!user||busy) return;busy=true;try{
  const s=snapshot();if(!valid(s))throw Error('Hay datos locales inválidos. Descargá un respaldo.');
@@ -137,7 +143,7 @@
  if(!row){panel.hidden=true;status('Todavía no hay datos compartidos. Importá los originales desde Settings en la computadora principal.');notice.hidden=false;notice.innerHTML='La primera carga se realiza desde la computadora principal.<button type="button" class="btn small" data-page="settings">Abrir Settings</button>';return}
  if(row.data?.format!=='chechu-sync-v1'||!valid(row.data.storage))throw Error('Datos de nube incompatibles; se conservaron sin cambios.');
  if(baseline&&valid(baseline.data)){lastSaved=JSON.stringify(baseline.data);ready=true;if(row.updated_at!==baseline.revision)await reconcile(row);else status('Todo actualizado.');panel.hidden=true;}
- else {preserve(snapshot(),row);autoReceive(row,true);ready=true;panel.hidden=true;status('Todo actualizado.');}
+ else {await preserve(snapshot(),row);autoReceive(row,true);ready=true;panel.hidden=true;status('Todo actualizado.');}
  
  }
  $('cloudLogin').onsubmit=async e=>{e.preventDefault();try{const r=await client.auth.signInWithPassword({email:$('cloudEmail').value,password:$('cloudPassword').value});if(r.error)throw r.error;user=r.data.user;sessionStorage.removeItem('chechu_local_mode');await authenticated()}catch(e){status(e.message)}};
