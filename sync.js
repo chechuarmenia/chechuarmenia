@@ -11,6 +11,7 @@
  document.addEventListener('DOMContentLoaded',async()=>{
  const panel=document.createElement('section');panel.id='cloudPanel';panel.setAttribute('aria-label','Cuenta y sincronización');
  const accountStyle=document.createElement('style');accountStyle.textContent=`
+ html:has(#cloudPanel:not([hidden])),body:has(#cloudPanel:not([hidden])){overflow:hidden}
  #cloudPanel{position:fixed;inset:0;z-index:99999;overflow:auto;overscroll-behavior:contain;background:var(--bg,#f7fafd);color:var(--ink,#142c46);font:14px/1.6 'DM Sans',sans-serif;padding:clamp(20px,5vw,64px) max(16px,env(safe-area-inset-right)) max(28px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));-webkit-text-size-adjust:100%}
  #cloudPanel,#cloudPanel *{box-sizing:border-box}#cloudPanel [hidden]{display:none!important}
  #cloudPanel .cloud-wrap{max-width:1020px;margin:0 auto}#cloudPanel .cloud-brand{display:flex;align-items:center;gap:11px;margin-bottom:36px}#cloudPanel .cloud-logo{width:42px;height:42px;border-radius:15px;background:var(--navy,#0c2d4c);color:white;display:grid;place-items:center;font:800 24px Manrope,sans-serif}#cloudPanel .cloud-brand strong{display:block;font:800 15px Manrope,sans-serif;letter-spacing:.02em}#cloudPanel .cloud-brand small{display:block;font-size:10px;letter-spacing:.18em;color:var(--muted,#72859b)}
