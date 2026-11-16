@@ -14,7 +14,7 @@
  const launcher=document.createElement('button');launcher.textContent='☁ Cuenta y sincronización';launcher.style='position:fixed;bottom:12px;right:12px;z-index:99998';launcher.onclick=()=>panel.hidden=false;document.body.append(launcher);
  const $=id=>document.getElementById(id),status=t=>$('cloudStatus').textContent=t;
  $('cloudBackup').onclick=()=>backup(snapshot(''),'original');$('cloudCurrent').onclick=()=>backup(snapshot(),'actual');
- $('cloudLocal').onclick=()=>{if(owner){localStorage.removeItem('chechu_active_account');location.reload()}else panel.hidden=true};
+ $('cloudLocal').onclick=()=>{sessionStorage.setItem('chechu_local_mode','1');if(owner){localStorage.removeItem('chechu_active_account');location.reload()}else panel.hidden=true};
  $('cloudRestore').onchange=async e=>{try{if(owner)throw Error('Para restaurar un respaldo, elegí primero los datos locales originales.');const f=e.target.files[0];if(!f)return;const b=JSON.parse(await f.text());if(b.format!=='chechu-full-backup-v1'||!valid(b.data))throw Error('Respaldo incompatible.');backup(snapshot(''),'antes-de-restaurar');if(!confirm('¿Restaurar este respaldo en los datos locales originales? No modifica la nube.'))return;for(const k of keys){if(b.data[k]===null)localStorage.removeItem(k);else localStorage.setItem(k,b.data[k])}location.reload()}catch(e){status(e.message)}};
  let client,user,busy=false,baseline=null,lastSaved='',ready=false;
  const metaKey=()=>prefix+'cloud_baseline';
@@ -31,8 +31,9 @@
  try{
  const {createClient}=await import('https://esm.sh/@supabase/supabase-js@2.95.3');
  client=createClient('https://tualpjxsvnjrpesgfueq.supabase.co','sb_publishable_2-R03WSpHACWUX_Cuz937g_GdSRDBJY');
+ if(sessionStorage.getItem('chechu_local_mode')==='1'){panel.hidden=true;status('Modo local original. Ingresá de nuevo para conectar la nube.')}
  const {data,error}=await client.auth.getUser();if(error&&error.name!=='AuthSessionMissingError')throw error;user=data.user;
- async function authenticated(){if(!user)return; if(owner!==user.id){localStorage.setItem('chechu_active_account',user.id);location.reload();return}
+ async function authenticated(){if(!user||sessionStorage.getItem('chechu_local_mode')==='1')return; if(owner!==user.id){localStorage.setItem('chechu_active_account',user.id);location.reload();return}
  $('cloudLogin').hidden=true;$('cloudActions').hidden=false;
  try{baseline=JSON.parse(localStorage.getItem(metaKey()))}catch{}
  const row=await read();
@@ -41,7 +42,7 @@
  if(baseline&&row.updated_at===baseline.revision){lastSaved=JSON.stringify(baseline.data);ready=true;status('Sesión: '+user.email+' · sincronización activa.');}
  else status('Sesión: '+user.email+' · hay una copia en nube. Descargala explícitamente para usarla en este dispositivo.');
  }
- $('cloudLogin').onsubmit=async e=>{e.preventDefault();try{const r=await client.auth.signInWithPassword({email:$('cloudEmail').value,password:$('cloudPassword').value});if(r.error)throw r.error;user=r.data.user;await authenticated()}catch(e){status(e.message)}};
+ $('cloudLogin').onsubmit=async e=>{e.preventDefault();try{const r=await client.auth.signInWithPassword({email:$('cloudEmail').value,password:$('cloudPassword').value});if(r.error)throw r.error;user=r.data.user;sessionStorage.removeItem('chechu_local_mode');await authenticated()}catch(e){status(e.message)}};
  $('cloudRegister').onclick=async()=>{if(!$('cloudLogin').reportValidity())return;const r=await client.auth.signUp({email:$('cloudEmail').value,password:$('cloudPassword').value});status(r.error?r.error.message:'Cuenta solicitada. Revisá el email de confirmación y después ingresá.');};
  $('cloudLogout').onclick=async()=>{ready=false;await client.auth.signOut();location.reload()};
  $('cloudOpen').onclick=()=>{if(ready)panel.hidden=true;else status('Primero descargá la nube o realizá la migración desde la computadora.')};
