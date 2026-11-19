@@ -509,7 +509,8 @@ const adultCount=b=>Math.max(1,Number(b.people)||1);
 const childCount=b=>Math.max(0,Number(b.children)||0);
 const passengerCount=b=>adultCount(b)+childCount(b);
 const lunchStaff=(d,b)=>Array.isArray(d.lunchStaff)?d.lunchStaff:(b.type==='personalizado'?['Guía']:['Guía']);
-const staffLunchNames=(d,b)=>b.type==='grupal'&&!d.overnight?[...new Set(d.staffLunchRecipients||[])].filter(name=>staffNames(b).includes(name)):[];
+const staffLunchEligibleNames=b=>b.type==='grupal'?staffNames(b):b.type==='personalizado'?['Chofer','Guía']:[];
+const staffLunchNames=(d,b)=>!d.overnight?[...new Set(d.staffLunchRecipients||[])].filter(name=>staffLunchEligibleNames(b).includes(name)):[];
 const staffLunchCost=(d,b)=>val(d,'lunch')*staffLunchNames(d,b).length;
 const lunchTotal=(d,b)=>val(d,'lunch')*adultCount(b)+staffLunchCost(d,b);
 // Legacy meals remain in the guide/driver fields until explicitly edited.
@@ -613,7 +614,7 @@ function drawStaff(){if(!active)return;el('budgetStaffChoices').innerHTML=[...ne
 
 
 function renderStaffLunch(d,b,name){
- if(b.type!=='grupal'||!staffNames(b).includes(name))return '';
+ if(!staffLunchEligibleNames(b).includes(name))return '';
  return '<div class="budget-staff-day-lunch" data-staff-day-lunch '+(d.overnight?'hidden':'')+'><label class="budget-staff-lunch-toggle"><input type="checkbox" data-staff-lunch="'+esc(name)+'" '+((d.staffLunchRecipients||[]).includes(name)?'checked':'')+'> Almuerzo · incluir al mismo precio que el turista</label></div>';
 }
 
@@ -649,7 +650,7 @@ function drawDays(){if(!active)return;const openDays=[...el('budgetDaysContainer
 <p class="budget-note">Hotel: el precio por persona se multiplica por ${passengerCount(active)} viajeros; el total por noche se suma directamente. Total hotel turistas: <b data-tourist-hotel-total>${fmt(touristHotelCost(d,active))}</b>. Almuerzo: se calcula para ${adultCount(active)} adultos.</p>
 </div></section>
 <section class="budget-cost-section budget-staff-costs" aria-label="Costos de staff">
-<h4>Staff</h4>${active.type==='grupal'?`<p class="budget-note" data-staff-day-lunch ${d.overnight?'hidden':''}>Almuerzos del staff: <b data-staff-lunch-total>${fmt(staffLunchCost(d,active))}</b>. Marcá quién almuerza con el grupo; se utiliza el precio por turista.</p>`:''}
+<h4>Staff</h4>${['grupal','personalizado'].includes(active.type)?`<p class="budget-note" data-staff-day-lunch ${d.overnight?'hidden':''}>Almuerzos del staff: <b data-staff-lunch-total>${fmt(staffLunchCost(d,active))}</b>. Marcá quién almuerza con el grupo; se utiliza el precio por turista.</p>`:''}
 <section class="budget-staff-role"><h5>Chofer</h5>${renderStaffAdmissions(d,active,'Chofer')}<div class="budget-cost-rows">
 <div class="budget-cost-row"><label>${hiredTransport(active)?'Chofer / transporte contratado · AMD (automático)':'Chofer · AMD'}<input type="text" inputmode="decimal" ${hiredTransport(active)?'readonly data-driver-transport':'data-day-field="driver"'} value="${hiredTransport(active)?fmt(quotedTransport(d,active)):esc(d.driver??0)}"></label><label>Nombre del chofer<input data-day-field="driverName" value="${esc(d.driverName||'')}"></label></div>${renderStaffLunch(d,active,'Chofer')}${active.type==='grupal'?renderRoleHotel(d,active,'driver','chofer'):''}
 <div class="budget-cost-row"><label>Combustible estimado · AMD<input readonly data-fuel-input value="${fmt(fuel(d,active))}"><small class="budget-note">${hiredTransport(active)?'Referencia por KM; el transporte contratado ya incluye combustible.':'Se calcula automáticamente según los KM y las tarifas de combustible.'}</small></label><label>Estacionamiento · AMD (200 por destino)<input readonly data-parking-total value="${parkingCost(d)}"></label></div>
@@ -949,7 +950,7 @@ el('budgetDaysContainer').addEventListener('click',e=>{
 el('budgetDaysContainer').addEventListener('change',e=>{
  const input=e.target;if(!active||!input.matches('[data-staff-lunch]'))return;
  const card=input.closest('[data-budget-day]');if(!card)return;const d=active.days[Number(card.dataset.budgetDay)],name=input.dataset.staffLunch;
- if(active.type!=='grupal'||d.overnight||!staffNames(active).includes(name))return;
+ if(d.overnight||!staffLunchEligibleNames(active).includes(name))return;
  d.staffLunchRecipients=input.checked?[...new Set([...(d.staffLunchRecipients||[]),name])]:(d.staffLunchRecipients||[]).filter(x=>x!==name);drawTotals();
 });
 
