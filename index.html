@@ -124,6 +124,8 @@
 .ig-content-day[data-ig-state="empty"],.ig-content-legend [data-ig-state="empty"]{background:#fff;color:#6c7d83;border-color:#dce5e6}.ig-content-legend [data-ig-state="empty"]{border:1px solid #dce5e6}.ig-content-day[data-ig-state="empty"] select{background:#f6f8f8;border-color:#e0e7e8}
 @media(max-width:650px){.ig-content-fixed-head{margin:-13px -13px 10px;padding:12px 13px 8px;border-radius:12px 12px 0 0}.ig-content-calendar .ig-content-scroll{max-height:58vh;max-height:58dvh}}
 .joy-conversion-preview{padding:13px 16px;border:1px solid #cad9ed;background:#edf4fc;border-radius:12px;color:#24517b;font-weight:800;font-size:16px}#joyRateRecovery[hidden]{display:none!important}#joyTxForm input[name="rate"][readonly]{background:#f5f8fc;color:#5b708b;cursor:default}
+
+.ig-planner-layout{display:grid;grid-template-columns:260px minmax(0,1fr);gap:18px;align-items:start}.ig-backlog{display:flex;flex-direction:column;min-width:0;max-height:65vh;max-height:65dvh;border:1px solid #dce5e6;border-radius:14px;background:#f8faf9;padding:14px}.ig-backlog-head{display:flex;align-items:center;justify-content:space-between;gap:8px}.ig-backlog-head h3{font:800 16px Manrope,sans-serif;margin:0}.ig-backlog-head>span{background:#e5ede8;border-radius:99px;padding:4px 9px;font-size:11px;font-weight:800}.ig-backlog>p{font-size:11px;line-height:1.5}.ig-backlog-add{display:grid;gap:8px;padding-bottom:14px;border-bottom:1px solid #dce5e6;margin-bottom:14px}.ig-backlog-add label{display:grid;gap:5px;font-size:11px;font-weight:700}.ig-backlog textarea,.ig-backlog select,.ig-backlog input[type="date"]{width:100%;min-width:0;box-sizing:border-box;border:1px solid #d4e0db;border-radius:8px;padding:8px;font:inherit;color:inherit;background:#fff}.ig-backlog textarea{resize:vertical;line-height:1.5}.ig-backlog-items{overflow-y:auto;min-height:60px;display:grid;gap:12px;padding:2px;scrollbar-gutter:stable}.ig-backlog-card{border:1px solid #dce5e6;border-radius:12px;padding:10px;display:grid;gap:8px;min-width:0}.ig-backlog-card-head{display:flex;justify-content:flex-end}.ig-drag-handle{border:1px solid #aabeb350;background:#ffffff80;color:inherit;border-radius:7px;padding:3px 7px;font:700 10px 'DM Sans',sans-serif;cursor:grab;touch-action:pan-y}.ig-drag-handle:active{cursor:grabbing}.ig-content-day-head .ig-drag-handle{margin-left:auto}.ig-day-to-list{align-self:flex-start;margin-top:auto;border:0;background:transparent;padding:4px 0;color:inherit;font:700 10px 'DM Sans',sans-serif;cursor:pointer;text-decoration:underline}.ig-day-to-list[hidden]{display:none!important}.ig-backlog-plan{display:grid;gap:6px}.ig-backlog-plan input{font-size:11px}.ig-backlog-placeholder{border:1px dashed #c8d9ce;border-radius:10px;padding:16px;font-size:12px;line-height:1.6;color:#6b8073}.ig-drop-active{outline:3px solid var(--ig-accent)!important;outline-offset:-3px;box-shadow:inset 0 0 0 4px #ffffff88}.ig-is-dragging{opacity:.5}.ig-visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}.ig-backlog-card[data-ig-state="empty"]{background:#fff;color:#6c7d83}.ig-backlog-card[data-ig-state="pending"]{background:#fff1df;color:#795126;border-color:#ead6b8}.ig-backlog-card[data-ig-state="editing"]{background:#f0e9fb;color:#65448a;border-color:#d8c8ec}.ig-backlog-card[data-ig-state="draft"]{background:#e7f1fc;color:#365f8a;border-color:#c4d9ef}.ig-backlog-card[data-ig-state="scheduled"]{background:#e4f3e9;color:#326449;border-color:#bddcc8}.ig-backlog select{font-size:11px}.ig-planner-layout>.ig-content-scroll{min-width:0}.ig-drag-handle:focus-visible,.ig-day-to-list:focus-visible{outline:2px solid var(--ig-accent);outline-offset:2px}@media(max-width:850px){.ig-planner-layout{grid-template-columns:1fr}.ig-backlog{max-height:none}.ig-backlog-items{max-height:300px}.ig-backlog-add{grid-template-columns:1fr 1fr;align-items:end}.ig-backlog-add label:first-child{grid-column:1/-1}}@media(max-width:450px){.ig-backlog-add{grid-template-columns:1fr}.ig-backlog-items{max-height:260px}}
 </style><style>.subgroup-plain-title{margin:12px 0 22px;padding:0;background:transparent;border:0;box-shadow:none}.subgroup-plain-title h1{font-size:clamp(28px,3vw,40px);margin:0;display:inline-block;cursor:pointer}.subgroup-clean-detail .sectionhead{margin:20px 0 12px}.subgroup-clean-detail .panel{margin-bottom:22px}.subgroup-clean-detail .subgroup-tasks{background:#e7f0f8;border-color:#cbdff0}.subgroup-clean-detail .simple-goal-row{display:flex;align-items:center;justify-content:space-between;gap:16px}.subgroup-clean-detail .simple-goal-row span{overflow-wrap:anywhere}</style><style>#modalForm textarea[name="description"]{width:100%;min-height:150px;resize:vertical;line-height:1.5}</style></head><body><div id="app"></div><script>
 (()=>{'use strict';const formatDMY=v=>/^\d{4}-\d{2}-\d{2}$/.test(String(v||''))?String(v).slice(8,10)+'/'+String(v).slice(5,7)+'/'+String(v).slice(0,4):v;const KEY='chechu_creative_dashboard_v1',today=()=>new Date().toISOString().slice(0,10),uid=()=>Math.random().toString(36).slice(2,10),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])), plus=(d,n)=>{let x=new Date((d||today())+'T12:00:00');x.setDate(x.getDate()+n);return x.toISOString().slice(0,10)};
 const seed=()=>({version:1,name:'Chechu',phrase:'Creative paths, meaningful progress.',sections:[{id:'armenia',name:'Chechu Armenia',color:'#3a8c66',subs:[{id:'indy',name:'Indy Guide',parent:null},{id:'likelocal',name:'LikeLocal',parent:null},{id:'caig',name:'Instagram content',parent:null},{id:'tours',name:'Tours 2027',parent:null},{id:'gastro',name:'Gastro Tour',parent:'tours'},{id:'artmenia',name:'ARTMENIA',parent:'tours'},{id:'kokoro',name:'Kokoro Travel',parent:'tours'},{id:'wanderia',name:'Wanderia',parent:'tours'},{id:'personal',name:'Personalizado',parent:'tours'},{id:'guides',name:'PDF Guides',parent:null},{id:'caweb',name:'Website',parent:null}],links:[{label:'Website',url:'https://www.chechuarmenia.com'}]},{id:'joy',name:'JOY by Chechu · ART',color:'#f24b78',subs:[{id:'joyig',name:'Instagram content',parent:null},{id:'kdp',name:'Woven Paths · Amazon KDP',parent:null},{id:'joyweb',name:'Website',parent:null}],links:[{label:'Amazon coloring book',url:'https://www.amazon.com/dp/B0HMFV8J6S'}]},{id:'extra',name:'Extra Works',color:'#164565',subs:[{id:'mateo',name:'Mateo Drink',parent:null},{id:'notes',name:'Note Reviewer',parent:null},{id:'max',name:'Max Documentary',parent:null}],links:[]}],goals:[{id:'g1',section:'armenia',title:'Organize 3 group tours in 2027',measure:'3 group tours successfully operated in 2027',date:'2027-12-31',description:'Develop, market and deliver group travel experiences.'}],tasks:[{id:'t1',section:'armenia',sub:'tours',goal:'g1',title:'Finalize the three group tour concepts and dates',date:'2026-12-15',priority:'Important',status:'Not started',repeat:'none',created:today()},{id:'t2',section:'armenia',sub:'gastro',goal:'g1',title:'Complete Gastro Tour itinerary and supplier costs',date:'2026-12-20',priority:'ASAP',status:'Not started',repeat:'none',created:today()},{id:'t3',section:'armenia',sub:'artmenia',goal:'g1',title:'Prepare ARTMENIA sales page and launch content',date:'2027-01-15',priority:'Important',status:'Not started',repeat:'none',created:today()},{id:'t4',section:'armenia',sub:'tours',goal:'g1',title:'Set booking targets and open registrations',date:'2027-02-01',priority:'Important',status:'Not started',repeat:'none',created:today()}],ideas:[],focus:[],calendar:{url:''}});
@@ -146,27 +148,72 @@ function instagramContentEntry(scope,date){return data.instagramContent?.[scope]
 function saveInstagramContent(scope,date,patch){
  if(!['armenia','joy'].includes(scope)||!/^\d{4}-\d{2}-\d{2}$/.test(date))return false;
  data.instagramContent||={};data.instagramContent[scope]||={};
- const entry={...instagramContentEntry(scope,date),...patch};if(!IG_CONTENT_STATES.some(x=>x.id===entry.status))entry.status='empty';
+ const entry={...instagramContentEntry(scope,date),...patch};if(String(entry.title||'').trim())entry.id||=igPostId();if(!IG_CONTENT_STATES.some(x=>x.id===entry.status))entry.status='empty';
  if(!String(entry.title||'').trim()&&entry.status==='empty')delete data.instagramContent[scope][date];else data.instagramContent[scope][date]=entry;
  save();return true;
 }
 function instagramContentCardState(entry){return String(entry.title||'').trim()&&IG_CONTENT_STATES.some(x=>x.id===entry.status)?entry.status:'empty'}
+
+function igPostId(){return 'ig_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,10)}
+function igBacklog(scope){return Array.isArray(data.instagramContentBacklog?.[scope])?data.instagramContentBacklog[scope]:[]}
+function igStateOptions(status){return IG_CONTENT_STATES.map(x=>'<option value="'+x.id+'" '+(x.id===status?'selected':'')+'>'+esc(x.label)+'</option>').join('')}
+function igValidDate(date){if(!/^\d{4}-\d{2}-\d{2}$/.test(date||''))return false;const [y,m,d]=date.split('-').map(Number),value=new Date(y,m-1,d);return y>=1900&&y<=9999&&value.getFullYear()===y&&value.getMonth()===m-1&&value.getDate()===d}
+function moveInstagramPost(scope,from,to){
+ if(!['armenia','joy'].includes(scope)||!['day','list'].includes(from.kind)||!['day','list'].includes(to.kind))return false;
+ if((from.kind==='day'&&!igValidDate(from.date))||(to.kind==='day'&&!igValidDate(to.date)))return false;
+ if(from.kind===to.kind&&(from.kind==='list'||from.date===to.date))return false;
+ const calendar=JSON.parse(JSON.stringify(data.instagramContent?.[scope]||{}));let list=JSON.parse(JSON.stringify(igBacklog(scope)));
+ const source=from.kind==='day'?calendar[from.date]:list.find(x=>x.id===from.id);if(!source||!String(source.title||'').trim())return false;
+ const entry={...source,id:source.id||igPostId()};
+ if(from.kind==='day')delete calendar[from.date];else list=list.filter(x=>x.id!==from.id);
+ const removeIdentity=id=>{for(const [date,x] of Object.entries(calendar))if(x.id===id)delete calendar[date];list=list.filter(x=>x.id!==id)};
+ removeIdentity(entry.id);
+ if(to.kind==='day'){
+  const previous=calendar[to.date];
+  if(previous&&String(previous.title||'').trim()&&previous.id!==entry.id){const displaced={...previous,id:previous.id||igPostId()};removeIdentity(displaced.id);list.push(displaced)}
+  calendar[to.date]=entry;
+ }else list.push(entry);
+ const previousCalendar=data.instagramContent,previousList=data.instagramContentBacklog;
+ data.instagramContent={...(previousCalendar||{}),[scope]:calendar};data.instagramContentBacklog={...(previousList||{}),[scope]:list};
+ try{save()}catch(error){data.instagramContent=previousCalendar;data.instagramContentBacklog=previousList;throw error}
+ return true;
+}
+function addInstagramBacklogPost(scope,title,status){
+ if(!['armenia','joy'].includes(scope)||!title.trim())return false;
+ const old=data.instagramContentBacklog,entry={id:igPostId(),title,status:IG_CONTENT_STATES.some(x=>x.id===status)?status:'pending'};
+ data.instagramContentBacklog={...(old||{}),[scope]:[...igBacklog(scope),entry]};
+ try{save()}catch(error){data.instagramContentBacklog=old;throw error}return true;
+}
+function renderInstagramBacklog(scope){
+ const items=igBacklog(scope);
+ return '<aside class="ig-backlog" data-ig-backlog-drop data-ig-scope="'+scope+'" aria-label="Ideas y posteos sin fecha"><div class="ig-backlog-head"><h3>Ideas y posteos listos</h3><span>'+items.length+'</span></div><p class="muted">Arrastrá un post a un día o devolvelo a esta lista. Se mueve, sin copiarse.</p><form class="ig-backlog-add" data-ig-backlog-form data-ig-scope="'+scope+'"><label>Nuevo post o idea<textarea data-ig-new-title rows="3" placeholder="Nombre del post o idea…" required></textarea></label><label>Estado<select data-ig-new-status>'+igStateOptions('pending')+'</select></label><button type="submit" class="btn primary small">+ Agregar a la lista</button></form><div class="ig-backlog-items">'+(items.map(x=>'<article class="ig-backlog-card" data-ig-backlog-id="'+esc(x.id)+'" data-ig-scope="'+scope+'" data-ig-state="'+instagramContentCardState(x)+'"><div class="ig-backlog-card-head"><button type="button" draggable="true" class="ig-drag-handle" data-ig-drag="list" data-ig-id="'+esc(x.id)+'" data-ig-scope="'+scope+'" aria-label="Arrastrar post al calendario" title="Arrastrar al calendario">⠿ Arrastrar</button></div><label class="ig-visually-hidden" for="ig-idea-'+esc(x.id)+'">Nombre del post</label><textarea id="ig-idea-'+esc(x.id)+'" data-ig-backlog-title rows="3" placeholder="Nombre del post…">'+esc(x.title||'')+'</textarea><select data-ig-backlog-status aria-label="Estado del post">'+igStateOptions(x.status)+'</select><div class="ig-backlog-plan"><input type="date" data-ig-plan-date aria-label="Fecha para este post"><button type="button" class="btn small" data-ig-plan>Al calendario →</button></div></article>').join('')||'<div class="ig-backlog-placeholder">Tu lista está vacía. Agregá una idea o arrastrá un post desde el calendario.</div>')+'</div></aside>';
+}
+function igMoveAndRender(scope,from,to){
+ const scroll=document.querySelector('.ig-content-scroll'),list=document.querySelector('.ig-backlog-items'),position={left:scroll?.scrollLeft||0,top:scroll?.scrollTop||0,list:list?.scrollTop||0};
+ try{
+  if(!moveInstagramPost(scope,from,to))return;
+  if(to.kind==='day'){const [y,m]=to.date.split('-').map(Number);igContentMonths[scope]=y*12+m-1}
+  render();requestAnimationFrame(()=>{const grid=document.querySelector('.ig-content-scroll'),backlog=document.querySelector('.ig-backlog-items');if(grid){grid.scrollLeft=position.left;grid.scrollTop=position.top}if(backlog)backlog.scrollTop=position.list});
+  const status=document.querySelector('[data-ig-save-status]');if(status)status.textContent=to.kind==='list'?'Post movido a la lista.':'Post movido al calendario. Si el día estaba ocupado, el post anterior volvió a la lista.';
+ }catch{const status=document.querySelector('[data-ig-save-status]');if(status)status.textContent='No se pudo guardar el movimiento. El post sigue en su lugar original.'}
+}
+
 function instagramContentCalendar(s,g){
  const index=igContentMonths[s.id],layout=instagramContentDays(index),monthValue=layout.year+'-'+String(layout.month+1).padStart(2,'0'),monthLabel=new Date(layout.year,layout.month,1).toLocaleDateString('es',{month:'long',year:'numeric'});
  const now=new Date(),localToday=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');
  const cells=Array.from({length:layout.cells},(_,i)=>{
   const day=i-layout.offset+1;if(day<1||day>layout.count)return '<div class="ig-content-empty" aria-hidden="true"></div>';
   const date=monthValue+'-'+String(day).padStart(2,'0'),entry=instagramContentEntry(s.id,date),status=IG_CONTENT_STATES.some(x=>x.id===entry.status)?entry.status:'empty',cardState=instagramContentCardState(entry),fullDate=String(day).padStart(2,'0')+'/'+String(layout.month+1).padStart(2,'0')+'/'+layout.year,id='ig-content-'+s.id+'-'+date;
-  return '<article class="ig-content-day'+(date===localToday?' is-today':'')+'" data-ig-scope="'+s.id+'" data-ig-date="'+date+'" data-ig-state="'+cardState+'" aria-label="'+fullDate+'"><div class="ig-content-day-head"><time datetime="'+date+'">'+day+'</time>'+(date===localToday?'<span>Hoy</span>':'')+'</div><select data-ig-status aria-label="Estado del post del '+fullDate+'" title="'+esc(IG_CONTENT_STATES.find(x=>x.id===status).label)+'">'+IG_CONTENT_STATES.map(x=>'<option value="'+x.id+'" '+(x.id===status?'selected':'')+'>'+esc(x.label)+'</option>').join('')+'</select><label for="'+id+'">CONTENT:</label><textarea id="'+id+'" data-ig-content rows="4" placeholder="Nombre del post…">'+esc(entry.title||'')+'</textarea></article>';
+  return '<article class="ig-content-day'+(date===localToday?' is-today':'')+'" data-ig-scope="'+s.id+'" data-ig-date="'+date+'" data-ig-state="'+cardState+'" aria-label="'+fullDate+'"><div class="ig-content-day-head"><time datetime="'+date+'">'+day+'</time>'+(date===localToday?'<span>Hoy</span>':'')+'<button type="button" draggable="true" class="ig-drag-handle" data-ig-drag="day" data-ig-scope="'+s.id+'" data-ig-date-ref="'+date+'" aria-label="Arrastrar post del '+fullDate+'" title="Arrastrar a otro día o a la lista">⠿</button></div><select data-ig-status aria-label="Estado del post del '+fullDate+'" title="'+esc(IG_CONTENT_STATES.find(x=>x.id===status).label)+'">'+IG_CONTENT_STATES.map(x=>'<option value="'+x.id+'" '+(x.id===status?'selected':'')+'>'+esc(x.label)+'</option>').join('')+'</select><label for="'+id+'">CONTENT:</label><textarea id="'+id+'" data-ig-content rows="4" placeholder="Nombre del post…">'+esc(entry.title||'')+'</textarea><button type="button" class="ig-day-to-list" data-ig-to-list '+(String(entry.title||'').trim()?'':'hidden')+'>↩ Mover a la lista</button></article>';
  }).join('');
- return '<section class="ig-content-calendar" style="--ig-accent:'+esc(s.color)+'" aria-label="Calendario de contenido de '+esc(s.name)+'"><div class="ig-content-fixed-head"><div class="ig-content-toolbar"><div><span class="eyebrow">INSTAGRAM CONTENT</span><h2>'+esc(monthLabel)+'</h2></div><div class="row"><button type="button" class="btn small" data-ig-month="-1" data-ig-scope="'+s.id+'" aria-label="Mes anterior">←</button><button type="button" class="btn small" data-ig-month="today" data-ig-scope="'+s.id+'">Hoy</button><button type="button" class="btn small" data-ig-month="1" data-ig-scope="'+s.id+'" aria-label="Mes siguiente">→</button><label class="ig-content-month-label">Mes<input type="month" data-ig-month-picker="'+s.id+'" min="1900-01" max="9999-12" value="'+monthValue+'"></label></div></div><div class="ig-content-legend">'+IG_CONTENT_STATES.map(x=>'<span data-ig-state="'+x.id+'">'+esc(x.label)+'</span>').join('')+'</div><p class="muted">Escribí el nombre del post dentro de cada día y elegí su estado. Los cambios se guardan automáticamente.</p></div><div class="ig-content-scroll"><div class="ig-content-weekdays">'+['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'].map(x=>'<span>'+x+'</span>').join('')+'</div><div class="ig-content-grid">'+cells+'</div></div><p class="ig-content-save-status muted" data-ig-save-status role="status" aria-live="polite"></p></section>';
+ return '<section class="ig-content-calendar" style="--ig-accent:'+esc(s.color)+'" aria-label="Calendario de contenido de '+esc(s.name)+'"><div class="ig-content-fixed-head"><div class="ig-content-toolbar"><div><span class="eyebrow">INSTAGRAM CONTENT</span><h2>'+esc(monthLabel)+'</h2></div><div class="row"><button type="button" class="btn small" data-ig-month="-1" data-ig-scope="'+s.id+'" aria-label="Mes anterior">←</button><button type="button" class="btn small" data-ig-month="today" data-ig-scope="'+s.id+'">Hoy</button><button type="button" class="btn small" data-ig-month="1" data-ig-scope="'+s.id+'" aria-label="Mes siguiente">→</button><label class="ig-content-month-label">Mes<input type="month" data-ig-month-picker="'+s.id+'" min="1900-01" max="9999-12" value="'+monthValue+'"></label></div></div><div class="ig-content-legend">'+IG_CONTENT_STATES.map(x=>'<span data-ig-state="'+x.id+'">'+esc(x.label)+'</span>').join('')+'</div><p class="muted">Escribí el nombre del post dentro de cada día y elegí su estado. Los cambios se guardan automáticamente. Arrastrá las tarjetas para organizarlas.</p></div><div class="ig-planner-layout">'+renderInstagramBacklog(s.id)+'<div class="ig-content-scroll"><div class="ig-content-weekdays">'+['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'].map(x=>'<span>'+x+'</span>').join('')+'</div><div class="ig-content-grid">'+cells+'</div></div></div><p class="ig-content-save-status muted" data-ig-save-status role="status" aria-live="polite"></p></section>';
 }
 function persistInstagramContentCell(cell,patch){
  const status=document.querySelector('[data-ig-save-status]');
  try{if(saveInstagramContent(cell.dataset.igScope,cell.dataset.igDate,patch)&&status)status.textContent='Guardado en este dispositivo.'}
  catch{if(status)status.textContent='No se pudo guardar. Conservá el texto e intentá de nuevo.'}
 }
-document.addEventListener('input',e=>{if(!e.target.matches('[data-ig-content]'))return;const cell=e.target.closest('[data-ig-date]');if(cell){cell.dataset.igState=instagramContentCardState({title:e.target.value,status:cell.querySelector('[data-ig-status]').value});persistInstagramContentCell(cell,{title:e.target.value})}});
+document.addEventListener('input',e=>{if(!e.target.matches('[data-ig-content]'))return;const cell=e.target.closest('[data-ig-date]');if(cell){const moveButton=cell.querySelector('[data-ig-to-list]');if(moveButton)moveButton.hidden=!e.target.value.trim();cell.dataset.igState=instagramContentCardState({title:e.target.value,status:cell.querySelector('[data-ig-status]').value});persistInstagramContentCell(cell,{title:e.target.value})}});
 document.addEventListener('change',e=>{
  if(e.target.matches('[data-ig-status]')){const cell=e.target.closest('[data-ig-date]');if(!cell)return;const state=IG_CONTENT_STATES.find(x=>x.id===e.target.value);if(!state)return;cell.dataset.igState=instagramContentCardState({title:cell.querySelector('[data-ig-content]').value,status:state.id});e.target.title=state.label;persistInstagramContentCell(cell,{status:state.id})}
  if(e.target.matches('[data-ig-month-picker]')){const match=e.target.value.match(/^(\d{4})-(\d{2})$/);if(!match||Number(match[1])<1900||Number(match[1])>9999||Number(match[2])<1||Number(match[2])>12)return;igContentMonths[e.target.dataset.igMonthPicker]=Number(match[1])*12+Number(match[2])-1;render()}
@@ -175,6 +222,51 @@ document.addEventListener('click',e=>{
  const button=e.target.closest('[data-ig-month]');
  if(button){const scope=button.dataset.igScope;if(!['armenia','joy'].includes(scope))return;const next=button.dataset.igMonth==='today'?new Date().getFullYear()*12+new Date().getMonth():igContentMonths[scope]+Number(button.dataset.igMonth);if(next>=1900*12&&next<10000*12){igContentMonths[scope]=next;render()}return}
  const cell=e.target.closest('[data-ig-date]');if(cell&&!e.target.closest('select,textarea,label,button'))cell.querySelector('textarea')?.focus();
+});
+
+
+let igDraggingPost=null;
+function clearIgDropTargets(){document.querySelectorAll('.ig-drop-active').forEach(n=>n.classList.remove('ig-drop-active'))}
+function igDropTarget(target){return target.closest('[data-ig-date],[data-ig-backlog-drop]')}
+document.addEventListener('dragstart',e=>{
+ const handle=e.target.closest('[data-ig-drag]');if(!handle)return;
+ const scope=handle.dataset.igScope,from=handle.dataset.igDrag==='day'?{kind:'day',date:handle.dataset.igDateRef}:{kind:'list',id:handle.dataset.igId};
+ const entry=from.kind==='day'?data.instagramContent?.[scope]?.[from.date]:igBacklog(scope).find(x=>x.id===from.id);
+ if(!entry||!String(entry.title||'').trim()){e.preventDefault();return}
+ igDraggingPost={scope,from};e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('application/x-chechu-instagram-post',JSON.stringify(igDraggingPost));
+ handle.closest('[data-ig-date],[data-ig-backlog-id]')?.classList.add('ig-is-dragging');
+});
+document.addEventListener('dragover',e=>{
+ const target=igDropTarget(e.target);if(!igDraggingPost||!target||target.dataset.igScope!==igDraggingPost.scope)return;
+ e.preventDefault();e.dataTransfer.dropEffect='move';clearIgDropTargets();target.classList.add('ig-drop-active');
+ const grid=target.closest('.ig-content-scroll');if(grid){const box=grid.getBoundingClientRect();if(e.clientY>box.bottom-45)grid.scrollTop+=14;else if(e.clientY<box.top+45)grid.scrollTop-=14;if(e.clientX>box.right-35)grid.scrollLeft+=14;else if(e.clientX<box.left+35)grid.scrollLeft-=14}
+});
+document.addEventListener('drop',e=>{
+ const target=igDropTarget(e.target),source=igDraggingPost;if(!source||!target||target.dataset.igScope!==source.scope)return;
+ e.preventDefault();igDraggingPost=null;clearIgDropTargets();
+ igMoveAndRender(source.scope,source.from,target.hasAttribute('data-ig-date')?{kind:'day',date:target.dataset.igDate}:{kind:'list'});
+});
+document.addEventListener('dragend',()=>{igDraggingPost=null;clearIgDropTargets();document.querySelectorAll('.ig-is-dragging').forEach(n=>n.classList.remove('ig-is-dragging'))});
+document.addEventListener('submit',e=>{
+ const form=e.target.closest('[data-ig-backlog-form]');if(!form)return;e.preventDefault();
+ const title=form.querySelector('[data-ig-new-title]');if(!title.value.trim()){title.setCustomValidity('Escribí una idea o el nombre del post.');title.reportValidity();return}
+ try{if(addInstagramBacklogPost(form.dataset.igScope,title.value,form.querySelector('[data-ig-new-status]').value)){render();const status=document.querySelector('[data-ig-save-status]');if(status)status.textContent='Post agregado a la lista.'}}
+ catch{const status=document.querySelector('[data-ig-save-status]');if(status)status.textContent='No se pudo guardar la idea. El texto sigue en el formulario.'}
+});
+function updateInstagramBacklogCard(card,patch){
+ const scope=card.dataset.igScope,id=card.dataset.igBacklogId,old=data.instagramContentBacklog,list=igBacklog(scope),entry=list.find(x=>x.id===id);if(!entry)return;
+ const updated={...entry,...patch};data.instagramContentBacklog={...(old||{}),[scope]:list.map(x=>x.id===id?updated:x)};
+ try{save();card.dataset.igState=instagramContentCardState(updated);const status=document.querySelector('[data-ig-save-status]');if(status)status.textContent='Guardado en este dispositivo.'}
+ catch{data.instagramContentBacklog=old;const status=document.querySelector('[data-ig-save-status]');if(status)status.textContent='No se pudo guardar. Conservá el texto e intentá de nuevo.'}
+}
+document.addEventListener('input',e=>{
+ if(e.target.matches('[data-ig-new-title],[data-ig-plan-date]'))e.target.setCustomValidity('');
+ if(e.target.matches('[data-ig-backlog-title]')){const card=e.target.closest('[data-ig-backlog-id]');if(card)updateInstagramBacklogCard(card,{title:e.target.value})}
+});
+document.addEventListener('change',e=>{if(!e.target.matches('[data-ig-backlog-status]')||!IG_CONTENT_STATES.some(x=>x.id===e.target.value))return;const card=e.target.closest('[data-ig-backlog-id]');if(card)updateInstagramBacklogCard(card,{status:e.target.value})});
+document.addEventListener('click',e=>{
+ if(e.target.closest('[data-ig-to-list]')){const day=e.target.closest('[data-ig-date]');if(day)igMoveAndRender(day.dataset.igScope,{kind:'day',date:day.dataset.igDate},{kind:'list'});return}
+ if(e.target.closest('[data-ig-plan]')){const card=e.target.closest('[data-ig-backlog-id]');if(!card)return;const input=card.querySelector('[data-ig-plan-date]');if(!igValidDate(input.value)){input.setCustomValidity('Elegí una fecha válida para el post.');input.reportValidity();return}input.setCustomValidity('');igMoveAndRender(card.dataset.igScope,{kind:'list',id:card.dataset.igBacklogId},{kind:'day',date:input.value})}
 });
 
 function sectionPage(){
