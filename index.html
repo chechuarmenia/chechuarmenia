@@ -546,12 +546,12 @@ const groupTransport=(d,b)=>b.type==='grupal'?quotedTransport(d,b):0;
 const hiredTransport=b=>b.type==='grupal'||passengerCount(b)>=5;
 const transportAmount=(d,b)=>hiredTransport(b)?quotedTransport(d,b):val(d,'driver');
 const percentageEnabled=(b,key)=>b[key]!==false;
-const groupBuffer=(d,b)=>percentageEnabled(b,'transportBufferEnabled')&&hiredTransport(b)?quotedTransport(d,b)*0.05:0;
-const driverTip=(d,b)=>percentageEnabled(b,'driverTipEnabled')&&hiredTransport(b)?quotedTransport(d,b)*0.10:0;
-const guideTip=(d,b)=>percentageEnabled(b,'guideTipEnabled')&&hiredTransport(b)?val(d,'guide')*0.10:0;
+const groupBuffer=(d,b)=>percentageEnabled(b,'transportBufferEnabled')?transportAmount(d,b)*0.05:0;
+const driverTip=(d,b)=>percentageEnabled(b,'driverTipEnabled')?transportAmount(d,b)*0.10:0;
+const guideTip=(d,b)=>percentageEnabled(b,'guideTipEnabled')?transportAmount(d,b)*0.10:0;
 const transportCost=(d,b)=>transportAmount(d,b)+groupBuffer(d,b)+driverTip(d,b)+guideTip(d,b);
 const baseDayCost=(d,b)=>dayTotal(d,b)-(b.type==='grupal'?val(d,'driver'):0)-(b.type==='grupal'?fuel(d,b):0);
-const dayCost=(d,b)=>baseDayCost(d,b)+(hiredTransport(b)?transportCost(d,b):guideTip(d,b));
+const dayCost=(d,b)=>baseDayCost(d,b)+(hiredTransport(b)?transportCost(d,b):groupBuffer(d,b)+driverTip(d,b)+guideTip(d,b));
 const groupTotal=b=>b.days.reduce((sum,d)=>sum+dayCost(d,b),0);
 const total=b=>b.days.reduce((sum,d)=>sum+dayCost(d,b),0),fee=(d,b)=>dayCost(d,b)*val(b,'feePercent')/100,coverage=(d,b)=>dayCost(d,b)*0.03;
 const mealStaffNames=b=>[...new Set(['Chechu','Guía','Chofer',...(b.type==='grupal'?staffNames(b):[])])];
@@ -564,7 +564,7 @@ const preTaxTotal=b=>total(b)+b.days.reduce((sum,d)=>sum+fee(d,b)+coverage(d,b),
 const taxExtra=b=>b.taxEnabled===true?preTaxTotal(b)*0.10:0;
 const saleTotal=b=>preTaxTotal(b)+taxExtra(b);
 const isChechu=name=>String(name??'').trim().toLocaleLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')==='chechu';
-const cashNeeded=b=>airportCost(b)+b.days.reduce((sum,d)=>sum+(hiredTransport(b)?transportCost(d,b):fuel(d,b))+parkingCost(d)+allHotelCost(d,b)+crewMealTotal(d)+lunchTotal(d,b)+ticketCost(d,b.people||1,b)+customExperienceCost(d,b)+extraStaffFees(d,b)+(b.type==='grupal'||passengerCount(b)>=5?0:isChechu(d.driverName)?0:val(d,'driver'))+(isChechu(d.guideName)?0:val(d,'guide')+overnightGuideExtra(d)),0);
+const cashNeeded=b=>airportCost(b)+b.days.reduce((sum,d)=>sum+(hiredTransport(b)?transportCost(d,b):fuel(d,b)+groupBuffer(d,b)+driverTip(d,b)+guideTip(d,b))+parkingCost(d)+allHotelCost(d,b)+crewMealTotal(d)+lunchTotal(d,b)+ticketCost(d,b.people||1,b)+customExperienceCost(d,b)+extraStaffFees(d,b)+(b.type==='grupal'||passengerCount(b)>=5?0:isChechu(d.driverName)?0:val(d,'driver'))+(isChechu(d.guideName)?0:val(d,'guide')+overnightGuideExtra(d)),0);
 const chechuProfit=b=>companionCost(b)+airportFee(b)+b.days.reduce((sum,d)=>sum+fee(d,b)+(passengerCount(b)<5&&isChechu(d.driverName)?val(d,'driver'):0)+(isChechu(d.guideName)?val(d,'guide')+overnightGuideExtra(d):0),0);
 const profitUsd=b=>{const rate=b.currency==='EUR'?val(b,'usdAmdRate'):val(b,'usdRate');return rate>0?'USD '+(chechuProfit(b)/rate).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}):'Cotización pendiente'};
 const finalUsd=b=>val(b,'usdRate')>0?(b.currency==='EUR'?'EUR ':'USD ')+(saleTotal(b)/val(b,'usdRate')).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}):'Cotización pendiente';
@@ -690,7 +690,7 @@ function budgetCostRows(b,showGuideExtra){
  const n=showGuideExtra?23:22,hired=hiredTransport(b);
  const rows=b.days.map((d,i)=>{
   const c=dayCost(d,b)+companionDayCost(d,b),f=fee(d,b),r=coverage(d,b),final=c+f+r;
-  return {kind:'day',values:[i+1,d.date||'',d.stops.join(' → ')||'Sin destinos',km(d),hired?null:fuel(d,b),transportAmount(d,b),hired?groupBuffer(d,b):null,hired?driverTip(d,b):null,val(d,'guide'),hired?guideTip(d,b):null,...(showGuideExtra?[d.overnight?overnightGuideExtra(d):null]:[]),lunchTotal(d,b),d.overnight?crewMealTotal(d):null,ticketCost(d,adultCount(b),b)+customExperienceCost(d,b),parkingCost(d),allHotelCost(d,b),extraStaffFees(d,b)+companionDayCost(d,b),val(d,'other'),c,f,r,final,final]};
+  return {kind:'day',values:[i+1,d.date||'',d.stops.join(' → ')||'Sin destinos',km(d),hired?null:fuel(d,b),transportAmount(d,b),groupBuffer(d,b),driverTip(d,b),val(d,'guide'),guideTip(d,b),...(showGuideExtra?[d.overnight?overnightGuideExtra(d):null]:[]),lunchTotal(d,b),d.overnight?crewMealTotal(d):null,ticketCost(d,adultCount(b),b)+customExperienceCost(d,b),parkingCost(d),allHotelCost(d,b),extraStaffFees(d,b)+companionDayCost(d,b),val(d,'other'),c,f,r,final,final]};
  });
  function extra(label,cost,honor,reserve,assign){
   const values=Array(n).fill(null);values[0]=label[0];values[2]=label[1];assign(values);values[n-5]=cost;values[n-4]=honor;values[n-3]=reserve;values[n-2]=cost+honor+reserve;values[n-1]=cost+honor+reserve;
