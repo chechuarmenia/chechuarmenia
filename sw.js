@@ -1,4 +1,4 @@
-const CACHE='chechu-dashboard-v42';
+const CACHE='chechu-dashboard-v43';
 const BASE='/chechuarmenia/';
 const ASSETS=[BASE,BASE+'sync.js',BASE+'manifest.webmanifest',BASE+'app-icon.svg'];
 self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS.map(url=>new Request(url,{cache:'reload'}))))));
